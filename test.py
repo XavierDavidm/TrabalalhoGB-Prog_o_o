@@ -30,7 +30,6 @@ class ProcessoImpressao(Processo):
     def execute(self):
         pass
 
-
 #main e sistema/menu
 fila=[]
 arq=open('computation.txt','w')
@@ -39,12 +38,12 @@ encerrar=False
 while encerrar!=True:
     print('______________')
     print('-----MENU-----')
-    print('1->Criar Processo')
-    print('2->Executar Próximo')
-    print('3->Executar Processo específico')
-    print('4->Salvar a fila de processos')
-    print('5->Carregar do arquvio a fila processos')
-    print('0->Salvar e Sair')
+    print('1 -> Criar Processo')
+    print('2 -> Executar Próximo')
+    print('3 -> Executar Processo específico')
+    print('4 -> Salvar a fila de processos')
+    print('5 -> Carregar do arquvio a fila processos')
+    print('0 -> Salvar e Sair')
     r=str(input('digite a ação que deseja realizar:'))
     if r=='0':
         encerrar=True
@@ -53,11 +52,21 @@ while encerrar!=True:
 
     elif r=='1':
         print('Tipos de processo')
-        print('1->Processo de Cálculo')
-        print('2->Processo de Gravação')
-        print('3->Processo de Leitura')
-        print('4->Processo de Impressão')
-        r=int(input())
+        print('1 -> Processo de Cálculo')
+        print('2 -> Processo de Gravação')
+        print('3 -> Processo de Leitura')
+        print('4 -> Processo de Impressão')
+        r=str(input('Qual Processo deseja Criar: '))
+        if r=='1':
+            pass
+        elif r=='2':
+            pass
+        elif r=='3':
+            pass
+        elif r=='4':
+            pass
+        else:
+            print('seleção inválida!')
 
     elif r=='2':
         pass
@@ -70,6 +79,6 @@ while encerrar!=True:
 
     elif r=='5':
         pass
-
+    
     else:
-        pass
+        print('comando não reconhecido!')
