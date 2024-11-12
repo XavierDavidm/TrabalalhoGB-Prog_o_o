@@ -33,10 +33,13 @@ class ProcessoCalculo(Processo):
             print('operação inválida')
 
 class ProcessoGravacao(Processo):
-    def __init__(self, pid):
+    def __init__(self, pid, expressao):
         super().__init__(pid)
-    def execute(self):
-        pass
+        self.expressao=str(expressao)
+    def execute(self): #escreve expressão no fim do arquivo sem sobrescrever
+        with open('computation.txt','a') as ARQcomputation:
+            linha=str(self.expressao+'\n')
+            ARQcomputation.write(linha)
 
 class ProcessoLeitura(Processo):
     def __init__(self, pid):
@@ -53,7 +56,7 @@ class ProcessoImpressao(Processo):
 class Sistema:
     def __init__(self):
         self.fila=[] #fila de operações inicia vazia dentro de sistema
-        self.start=False #variavel de validação do metodo geradorDeIds
+        self.newId=0 #variavel do metodo geradorDeIds
 
     def menu(self):
         encerrar=False
@@ -71,57 +74,100 @@ class Sistema:
                 encerrar=True
                 #chamar save aq
                 print('encerrando sistema...')
-            elif r=='1':
+            elif r=='1': #criador de processos
                 print('Tipos de processo')
                 print('1 -> Processo de Cálculo')
                 print('2 -> Processo de Gravação')
                 print('3 -> Processo de Leitura')
                 print('4 -> Processo de Impressão')
                 r=str(input('Qual Processo deseja Criar: '))
-                if r=='1':
-                    expressao=str(input('Digite a expressão do processo de calculo (usar espaço)ex :1 + 1 : '))
-                    newProcesso=ProcessoCalculo(self.geradorDeIds(),expressao)
-                    self.fila.append(newProcesso)
-                elif r=='2':
+                if r=='1': #Processo de Cálculo
+                    expressao=str(input('Digite a expressão do processo de calculo (usar espaço)ex :1 + 1 :'))
+                    Processo=ProcessoCalculo(self.geradorDeIds(),expressao)
+                    self.fila.append(Processo)
+                    
+                elif r=='2': #Processo de Gravação
+                    expressao=str(input('Digite a expressão que será gravada (usar espaço)ex :1 + 1 :'))
+                    Processo=ProcessoGravacao(self.geradorDeIds(),expressao)
+                    self.fila.append(Processo)
+
+                elif r=='3': #Processo de Leitura
                     pass
-                elif r=='3':
-                    pass
-                elif r=='4':
+
+                elif r=='4': #Processo de Impressão
                     pass
                 else:
                     print('seleção inválida!')
 
+            #executar proximo da fila
             elif r=='2':
-                pass
+                #validação se a fila está vazia
+                if len(self.fila)==0:
+                    print('A Fila de processos está vazia! crie um processo para executa-lo')
+                else:
+                    #executa o primeiro processo da fila[0]
+                    Processo = self.fila[0]
+                    Processo.execute()
+                    self.fila = self.fila[1:] #remove o primeiro processo após sua execução
+            #executar processo especifico
             elif r=='3':
-                pass
+                #validação se a fila está vazia
+                if len(self.fila)==0:
+                    print('A Fila de processos está vazia! crie um processo para executa-lo')
+                else:
+                    #executa o processo selecionado pelo user usando pid
+                    status=False #validação se o processo existe ou não
+                    id = int(input('digite o pid do precesso que deseja executar: '))
+                    for Processo in self.fila: #busca o processo com pid informado o pelo user e o executa
+                        if Processo.pid == id:
+                            Processo.execute()
+                            self.fila.remove(Processo)
+                            status=True
+                            break
+                    if status==False:
+                        print('Processo não encontrado na lista')
+            #Salvar a fila de processos                 
             elif r=='4':
                 pass
+            #Carregar do arquivo a fila de processos
             elif r=='5':
-                pass
-            else:
+                print('Carregando Fila de Processos salva...')
+                with open('computation.txt','r') as ARQcomputation:
+                    nLinhas=int(sum(1 for _ in ARQcomputation))
+                    ARQcomputation.seek(0)
+                    for i in range(nLinhas):
+                        linha = ARQcomputation.readline().strip()
+                        Processo=ProcessoCalculo(self.geradorDeIds(),linha)
+                        self.fila.append(Processo)
+            else:   
                 print('comando não reconhecido!')
-    def geradorDeIds(self): #irá gerar ids e contem verificação de qual id parou considerando o arquivo
-        #start verifica se o computation já foi lido para continuar a geração de ids
-        if self.start==False:
-            with open('computation.txt','r') as ARQcomputation:
-                nLinhas=int(sum(1 for _ in ARQcomputation))
-                ARQcomputation.seek(0)
-                self.newId=nLinhas+1
-                self.start=True
-                return(self.newId)
-        else: 
-            self.newId=self.newId+1
-            return(self.newId)
+    #este metodo gera os ids, é usado pelos criadores de processo e pelo carregador       
+    def geradorDeIds(self): 
+        self.newId=self.newId+1
+        return(self.newId)
 
 #anotações para fazer o trabalho: (apagar depois)
-#dar split na expressão usando o espaço 3 + 2 -> 3 , + , 4
+#check list
+#processo de calculo + execute ->FEITO
+#processo de GRAVAÇÃO + execute -> feito
+#processo de leitura + execute ->
+#processo de impressao + execute ->
+
+#menu
+#1.1-> FEITO
+#1.2->
+#1.3->
+#1.4->
+
+#2-> FEITO
+#3->feito
+#4->
+#5->feito
+
+#implementar save
+#implementar validações adicionais no 1(criação dos processos)
 
 #main
 #chamando sistema e menu
-#sistema=Sistema()
-#sistema.menu()
-ex=[(1),(2),(3)]
-print(ex[0])
-ex.remove(ex[0])
-print(ex[0])
+sistema=Sistema()
+sistema.menu()
