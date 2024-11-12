@@ -5,12 +5,14 @@ class Processo:
                     #ex na fila de processos parou no 3 ele deve gerar ids apartir do 4 para cima
     def execute(self):
         pass
-
+    def getId(self):
+        return self.pid
 class ProcessoCalculo(Processo):
     def __init__(self, pid, expressao): # expressao é uma string que será recebida e depois dividida usando split
         super().__init__(pid)
         expressao=str(expressao)#validação só para garantir que é string
         i=expressao.split(' ',3) #"i" split dividirá a string em operandoA,operandoB e operador
+        
         self.operandoA=int(i[0]) 
         self.operandoB=int(i[2])
         self.operador=i[1]
@@ -83,8 +85,16 @@ class Sistema:
                 r=str(input('Qual Processo deseja Criar: '))
                 if r=='1': #Processo de Cálculo
                     expressao=str(input('Digite a expressão do processo de calculo (usar espaço)ex :1 + 1 :'))
-                    Processo=ProcessoCalculo(self.geradorDeIds(),expressao)
-                    self.fila.append(Processo)
+                    #validação
+                    i=expressao.split(' ',3) #"i" split dividirá a string em operandoA,operandoB e operador
+                    operandoA=int(i[0]) 
+                    operandoB=int(i[2])
+                    operador=i[1]
+                    if operador=='/' and operandoB == 0:
+                        print('Erro! é impossivel dividir por zero')
+                    else:
+                        Processo=ProcessoCalculo(self.geradorDeIds(),expressao)
+                        self.fila.append(Processo)
                     
                 elif r=='2': #Processo de Gravação
                     expressao=str(input('Digite a expressão que será gravada (usar espaço)ex :1 + 1 :'))
@@ -129,7 +139,7 @@ class Sistema:
             #Salvar a fila de processos                 
             elif r=='4':
                 pass
-            #Carregar do arquivo a fila de processos
+            #Carregar do arquivo a fila de processos #mudar para acomodar o arquivo da fila
             elif r=='5':
                 print('Carregando Fila de Processos salva...')
                 with open('computation.txt','r') as ARQcomputation:
@@ -143,7 +153,7 @@ class Sistema:
                 print('comando não reconhecido!')
     #este metodo gera os ids, é usado pelos criadores de processo e pelo carregador       
     def geradorDeIds(self): 
-        self.newId=self.newId+1
+        self.newId=self.fila[-1].getId+1 #mudar para o ultimo da fila
         return(self.newId)
 
 #anotações para fazer o trabalho: (apagar depois)
@@ -155,19 +165,20 @@ class Sistema:
 
 #menu
 #1.1-> FEITO
-#1.2->
+#1.2-> feito
 #1.3->
 #1.4->
 
 #2-> FEITO
 #3->feito
 #4->
-#5->feito
+#5->
 
 #implementar save
 #implementar validações adicionais no 1(criação dos processos)
 
 #main
 #chamando sistema e menu
+
 sistema=Sistema()
 sistema.menu()
