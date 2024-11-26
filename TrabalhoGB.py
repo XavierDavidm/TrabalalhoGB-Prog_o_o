@@ -111,10 +111,18 @@ class Sistema:
         
         elif r == '2':  # Processo de Gravação
             expressao = str(input('Digite a expressão que será gravada (usar espaço) ex: 1 + 1: '))
-            Processo = ProcessoGravacao(self.geradorDeIds(), 'g', expressao)
-            print('Id:', Processo.getId())
-            self.fila.append(Processo)
-            print('Processo de Gravação criado com sucesso!')
+            # Validação
+            i = expressao.split(' ', 3)  # "i" split dividirá a string em operandoA, operandoB e operador
+            operandoA = int(i[0]) 
+            operandoB = int(i[2])
+            operador = i[1]
+            if operador == '/' and operandoB == 0:
+                print('Erro! É impossível dividir por zero.')
+            else:
+                Processo = ProcessoGravacao(self.geradorDeIds(), 'g', expressao)
+                print('Id:', Processo.getId())
+                self.fila.append(Processo)
+                print('Processo de Gravação criado com sucesso!')
         
         elif r == '3':  # Processo de Leitura
             Processo = ProcessoLeitura(self.geradorDeIds(), 'l')
@@ -205,7 +213,8 @@ class Sistema:
         return(self.newId)
 
     def menu(self):
-        self.carregar()
+        #self.carregar() #ATIVAR SE DESEJA CARREGAR AUTOMATICAMENTE, CUIDAR PARA NÃO CARREGAR MAIS DE UMA VEZ       
+        #POIS O CARREGAR DO ARQUIVO(fila.txt) NÃO LIMPA O ARQUIVO, CARREGAR DUAS OU MAIS VEZES GERA DUPLICATAS 
         encerrar=False
         while encerrar!=True:
             print('______________')
@@ -216,7 +225,7 @@ class Sistema:
             print('4 -> Salvar a fila de processos')
             print('5 -> Carregar do arquvio a fila processos')
             print('0 -> Salvar e Sair')
-            r=str(input('digite a ação que deseja realizar:'))
+            r=str(input('digite a ação que deseja realizar: '))
             if r=='0':
                 encerrar=True
                 self.salvar()                   
